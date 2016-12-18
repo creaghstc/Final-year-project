@@ -8,56 +8,61 @@
 
   <script>
 
-  var testmap = [];
-  var tile_width = 10;
-  var tile_height = 10;
-  var screen_width = window.prompt("Enter width");
-  var screen_height = window.prompt("Enter Height");
+  var testmap = []; //map array
 
-  var h = (screen_height/tile_height);
-  var w = (screen_width/tile_width);
+  //tile dimensions
+  var tile_width = 20;
+  var tile_height = 20;
+  //var screen_width = window.prompt("Enter width");
+  //var screen_height = window.prompt("Enter Height");
+  var screen_height = 360;
+  var screen_width = 720;
+
+  var h = (screen_height/tile_height); //relative height
+  var w = (screen_width/tile_width); //relative width
+
+  //Pixi initialzers
   var renderer = PIXI.autoDetectRenderer(screen_width, screen_height ,{backgroundColor : 0x000000255});
+  document.body.appendChild(renderer.view);
+  var stage = new PIXI.Container();
+
+  //textures
+  var grass = PIXI.Texture.fromImage('img/grass.png');
+  var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
+  var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
+
 
 
   //initialze a map at user specificatioins
-  function init(map, height, width){
+  function init2DMap(map, height, width){ //takes in array and relative dimensions
     map.length = height;
     for(i = 0; i < height; i++){
       map[i] = [];
       for(j = 0; j < width; j++){
-        map[i][j] = 0;
-      }
-    }
-    //console.log(map[1]);
-  }
-
-
-
-  document.body.appendChild(renderer.view);
-  var stage = new PIXI.Container();
-
-  var grass = PIXI.Texture.fromImage('img/green.jpg');
-  var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
-  function setup(){ //p5 requires setup (temporary)
-    init(testmap,h,w);
-    for(i = 0; i < h; i++){
-      for(j = 0; j < w; j++){
-        testmap[i][j] = noise(i,j);
-        //window.alert(banterlona[i][j]);
-      }
-    }
-    var map = new Generate();
-    map.generateMap(testmap);
-  }
-
-  animate();
+        map[i][j] = 0; //fill out map array
+      }//end j loop
+    }//end i loop
+  }//end function
 
   function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(stage);
+    requestAnimationFrame(animate);
+    renderer.render(stage);
   }
 
+   //p5 requires setup (temporary)
+  function setup(){
+    var map = new Generate(); //Generate object
+    init2DMap(testmap,h,w);
 
+    for(i = 0; i < h; i++){ //loop through rows
+      for(j = 0; j < w; j++){ //loop through columns
+        testmap[i][j] = noise(i,j); //produce nouse for each element in map
+      }//end j loop
+    }//end i loop
+    map.generateMap(testmap);
+  }//end funciton
+
+  animate(); //draw
 
   </script>
 </body>
