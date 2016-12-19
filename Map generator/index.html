@@ -8,41 +8,23 @@
 
   <script>
 
-  var testmap = []; //map array
-
+  var map = []; //map array
+  var inc = 0.01;
   //tile dimensions
-  var tile_width = 20;
-  var tile_height = 20;
+  var tile_width = 10;
+  var tile_height = 10;
   //var screen_width = window.prompt("Enter width");
   //var screen_height = window.prompt("Enter Height");
   var screen_height = 360;
-  var screen_width = 720;
+  var screen_width = 600;
 
   var h = (screen_height/tile_height); //relative height
   var w = (screen_width/tile_width); //relative width
 
-  //Pixi initialzers
+  //Pixi stuff
   var renderer = PIXI.autoDetectRenderer(screen_width, screen_height ,{backgroundColor : 0x000000255});
   document.body.appendChild(renderer.view);
   var stage = new PIXI.Container();
-
-  //textures
-  var grass = PIXI.Texture.fromImage('img/grass.png');
-  var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
-  var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
-
-
-
-  //initialze a map at user specificatioins
-  function init2DMap(map, height, width){ //takes in array and relative dimensions
-    map.length = height;
-    for(i = 0; i < height; i++){
-      map[i] = [];
-      for(j = 0; j < width; j++){
-        map[i][j] = 0; //fill out map array
-      }//end j loop
-    }//end i loop
-  }//end function
 
   function animate() {
     requestAnimationFrame(animate);
@@ -51,18 +33,36 @@
 
    //p5 requires setup (temporary)
   function setup(){
+    createCanvas(200, 200);
+    pixelDensity(1);
+    noiseSeed(99);
+    noiseDetail(16,0.5); // if falloff above .5, noise may return value > 1
     var map = new Generate(); //Generate object
-    init2DMap(testmap,h,w);
+    map.init2DMap(map,h,w);
+    map.generateNoise(map);
+    map.generateMap(map);
+    animate(); //draw
+    console.log(map);
+  }//end funciton setup
 
-    for(i = 0; i < h; i++){ //loop through rows
-      for(j = 0; j < w; j++){ //loop through columns
-        testmap[i][j] = noise(i,j); //produce nouse for each element in map
-      }//end j loop
-    }//end i loop
-    map.generateMap(testmap);
-  }//end funciton
-
-  animate(); //draw
-
+  function draw() { //visualize noise greyscale
+    //(https://github.com/CodingRainbow/Rainbow-Code/blob/master/perlin_noise/04_perlin_noise_2D/sketch.js)
+    var yoff = 0;
+    loadPixels();
+    for (var y = 0; y < height; y++) {
+      var xoff = 0;
+      for (var x = 0; x < width; x++) {
+        var index = (x + y * width) * 4;
+        var r = noise(xoff, yoff) * 255;
+        pixels[index + 0] = r;
+        pixels[index + 1] = r;
+        pixels[index + 2] = r;
+        pixels[index + 3] = 255;
+        xoff += inc;
+      }
+      yoff += inc;
+    }
+    updatePixels();
+  }
   </script>
 </body>
