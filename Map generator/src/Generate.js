@@ -1,9 +1,18 @@
 function Generate(){
   this.generateNoise = function(map){
+    var ycoord = 0;
     for(i = 0; i < h; i++){ //loop through rows
+      var xcoord = 0;
       for(j = 0; j < w; j++){ //loop through columns
-        map[i][j] = noise(i,j); //produce nouse for each element in map
+        xcoord += .2;
+        if (i ==0 || j == 0 || i == h-1 || j == w-1){ //edges = 1
+          map[i][j] = 1;
+        }
+        else{
+          map[i][j] = noise(xcoord,ycoord); //produce nouse for each element in map
+        }
       }//end j loop
+      ycoord += .2;
     }//end i loop
   }//end function generateNoise
 
