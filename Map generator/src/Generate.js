@@ -1,4 +1,14 @@
 function Generate(){
+  function smooth(x,y){
+    
+
+  }
+  function placeTile(x,y,texture){
+    var tile = new PIXI.extras.TilingSprite(texture, tile_height, tile_width);
+    tile.position.x = x;
+    tile.position.y = y;
+    stage.addChild(tile);
+  }
   this.generateNoise = function(map){
     var ycoord = 0;
     for(i = 0; i < h; i++){ //loop through rows
@@ -42,30 +52,21 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
-          var Grass = new PIXI.extras.TilingSprite(grass, tile_width, tile_height);
-          Grass.position.y = i*tile_height;
-          Grass.position.x = j*tile_width;
+          placeTile(j*tile_width, i*tile_width, grass);
           var x = [j,i];
           grassArr.push(x);
-          stage.addChild(Grass);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
-          var mountain = new PIXI.extras.TilingSprite(mountainTexture, tile_width, tile_height);
-          mountain.position.y = i*tile_height;
-          mountain.position.x = j*tile_width;
+          placeTile(j*tile_width, i*tile_width, mountainTexture);
           var x = [j,i];
           mountainArr.push(x);
-          stage.addChild(mountain);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var water = new PIXI.extras.TilingSprite(waterTexture, tile_width, tile_height);
-          water.position.y = i*tile_height;
-          water.position.x = j*tile_width;
+          placeTile(j*tile_width, i*tile_width, waterTexture);
           var x = [j,i];
           waterArr.push(x);
-          stage.addChild(water);
         }
       }
     }
