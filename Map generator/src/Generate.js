@@ -43,37 +43,44 @@ function Generate(){
     var grass = PIXI.Texture.fromImage('img/grass.png');
     var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
     var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
-    var grassArr = [];
-    var mountainArr = [];
-    var waterArr = [];
+    var mapArr = [];
 
     for(i = 0; i < h; i++){
       for(j = 0; j < w; j++){
 
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
-          placeTile(j*tile_width, i*tile_width, grass);
           var x = new tile(j*tile_width, i*tile_height, "grass");
-          grassArr.push(x);
+          mapArr.push(x);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
-          placeTile(j*tile_width, i*tile_width, mountainTexture);
-
           var x = new tile(j*tile_width, i*tile_height, "mountain");
-          mountainArr.push(x);
+          mapArr.push(x);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          placeTile(j*tile_width, i*tile_width, waterTexture);
           var x = new tile(j*tile_width, i*tile_height, "water");
-          waterArr.push(x);
+          mapArr.push(x);
         }
       }
     }
-    console.log(h*w, "tiles");
-    console.log(grassArr.length, "grass tiles", grassArr);
-    console.log(mountainArr.length, "mountain tiles", mountainArr);
-    console.log(waterArr.length, "water tiles", waterArr);
+    //this way allows me to edit the tile type before placing
+    for(i = 0; i < mapArr.length; i++){
+      if(mapArr[i].type == "grass"){
+        placeTile(mapArr[i].x, mapArr[i].y, grass)
+      }
+      if(mapArr[i].type == "mountain"){
+        placeTile(mapArr[i].x, mapArr[i].y, mountainTexture)
+      }
+      if(mapArr[i].type == "water"){
+        placeTile(mapArr[i].x, mapArr[i].y, waterTexture)
+      }
+    }
+    console.log(mapArr, "tiles");
+
+    // console.log(grassArr.length, "grass tiles", grassArr);
+    // console.log(mountainArr.length, "mountain tiles", mountainArr);
+    // console.log(waterArr.length, "water tiles", waterArr);
   }
 }
