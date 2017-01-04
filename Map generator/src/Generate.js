@@ -1,6 +1,6 @@
 function Generate(){
   function smooth(x,y){
-    
+
 
   }
   function placeTile(x,y,texture){
@@ -53,19 +53,20 @@ function Generate(){
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
           placeTile(j*tile_width, i*tile_width, grass);
-          var x = [j,i];
+          var x = new tile(j*tile_width, i*tile_height, "grass");
           grassArr.push(x);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
           placeTile(j*tile_width, i*tile_width, mountainTexture);
-          var x = [j,i];
+
+          var x = new tile(j*tile_width, i*tile_height, "mountain");
           mountainArr.push(x);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
           placeTile(j*tile_width, i*tile_width, waterTexture);
-          var x = [j,i];
+          var x = new tile(j*tile_width, i*tile_height, "water");
           waterArr.push(x);
         }
       }
