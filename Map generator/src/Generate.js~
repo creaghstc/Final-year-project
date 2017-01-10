@@ -50,17 +50,17 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
-          var x = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
+          var tile = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
           mapArr.push(x);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
-          var x = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
+          var tile = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
           mapArr.push(x);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var x = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
+          var tile = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
           mapArr.push(x);
         }
       }
