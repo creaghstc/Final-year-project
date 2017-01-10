@@ -40,9 +40,9 @@ function Generate(){
 
   this.generateMap = function(map){
     //textures and arrays
-    //var grass = PIXI.Texture.fromImage('img/grass.png');
-    var mountainTexture = PIXI.Texture.fromImage('Map generator/img/brown.jpg');
-    var waterTexture = PIXI.Texture.fromImage('Map generator/img/blue.jpg');
+    var grass = PIXI.Texture.fromImage('img/grass.png');
+    var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
+    var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
     var mapArr = [];
 
     for(i = 0; i < h; i++){
@@ -50,17 +50,17 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
-          var tile = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
           mapArr.push(x);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
-          var tile = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
           mapArr.push(x);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var tile = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
           mapArr.push(x);
         }
       }
@@ -68,8 +68,8 @@ function Generate(){
     //this way allows me to edit the tile type before placing
     for(i = 0; i < mapArr.length; i++){
       //if(mapArr[i].type == "grass"){
-        //placeTile(mapArr[i].x, mapArr[i].y, grass)
-      //}
+        placeTile(mapArr[i].x, mapArr[i].y, grass)
+      }
       if(mapArr[i].type == "mountain"){
         placeTile(mapArr[i].x, mapArr[i].y, mountainTexture)
       }

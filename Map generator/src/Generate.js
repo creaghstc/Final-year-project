@@ -40,9 +40,9 @@ function Generate(){
 
   this.generateMap = function(map){
     //textures and arrays
-    //var grass = PIXI.Texture.fromImage('img/grass.png');
-    var mountainTexture = PIXI.Texture.fromImage('Map generator/img/brown.jpg');
-    var waterTexture = PIXI.Texture.fromImage('Map generator/img/blue.jpg');
+    var grass = PIXI.Texture.fromImage('img/grass.png');
+    var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
+    var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
     var mapArr = [];
 
     for(i = 0; i < h; i++){
@@ -67,9 +67,9 @@ function Generate(){
     }
     //this way allows me to edit the tile type before placing
     for(i = 0; i < mapArr.length; i++){
-      //if(mapArr[i].type == "grass"){
-        //placeTile(mapArr[i].x, mapArr[i].y, grass)
-      //}
+      if(mapArr[i].type == "grass"){
+        placeTile(mapArr[i].x, mapArr[i].y, grass)
+      }
       if(mapArr[i].type == "mountain"){
         placeTile(mapArr[i].x, mapArr[i].y, mountainTexture)
       }
