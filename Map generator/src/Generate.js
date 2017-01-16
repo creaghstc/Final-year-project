@@ -1,8 +1,67 @@
 function Generate(){
-  function smooth(x,y){
+  var mapArr = [];
+  var counter;
+
+  function mode(array)
+{
+    if(array.length == 0)
+        return null;
+    var modeMap = {};
+    var maxEl = array[0], maxCount = 1;
+    for(var i = 0; i < array.length; i++)
+    {
+        var el = array[i];
+        if(modeMap[el] == null)
+            modeMap[el] = 1;
+        else
+            modeMap[el]++;
+        if(modeMap[el] > maxCount)
+        {
+            maxEl = el;
+            maxCount = modeMap[el];
+        }
+    }
+    return maxEl;
+}
 
 
+
+  function surroundingTiles(tile){
+    counter = 0;
+    var typeArr = [];
+    var ResultArray = [];
+
+
+    for(j = 0; j < mapArr.length; j++){ //loop over all tiles
+      for(yDif = -tile_height; yDif < tile_height + 1; yDif += tile_height){ //surrounding tiles
+        for(xDif = -tile_width; xDif < tile_width + 1; xDif += tile_width){ //surrounding tiles
+          if(mapArr[j].y == tile.y + yDif && mapArr[j].x == tile.x + xDif){ //if the tiles are surrounding base tile
+            tiletype = mapArr[j].type; //log base tile type
+            typeArr.push(tiletype); //store surrounding tiles
+
+            if(tiletype != tile.type){ //if surroubnding tile is not the base tile
+              counter ++; //counter for different tiles
+            }
+          }
+        }
+      }
+    }
+    ResultArray.push(counter);
+    ResultArray.push(mode(typeArr)); //get most common tile
+
+    return ResultArray; //return most common tile and counter
   }
+
+
+  function smooth(){
+    for(i = 0; i < mapArr.length; i++){
+      var answer = surroundingTiles(mapArr[i]);
+      if(answer[0] > 6 ){
+        mapArr[i].type = answer[1];
+      }
+    }
+  }
+
   function placeTile(x,y,texture){
     var tile = new PIXI.extras.TilingSprite(texture, tile_height, tile_width);
     tile.position.x = x;
@@ -43,7 +102,6 @@ function Generate(){
     var grass = PIXI.Texture.fromImage('img/grass.png');
     var mountainTexture = PIXI.Texture.fromImage('img/brown.jpg');
     var waterTexture = PIXI.Texture.fromImage('img/blue.jpg');
-    var mapArr = [];
 
     for(i = 0; i < h; i++){
       for(j = 0; j < w; j++){
@@ -65,6 +123,14 @@ function Generate(){
         }
       }
     }
+
+    // for(i = 0; i < mapArr.length; i++){
+    //   if(mapArr[i].type == "grass"){
+    //     mapArr[i].type = 'mountain';
+    //   }
+    // }
+    smooth();
+
     //this way allows me to edit the tile type before placing
     for(i = 0; i < mapArr.length; i++){
       if(mapArr[i].type == "grass"){
@@ -77,10 +143,7 @@ function Generate(){
         placeTile(mapArr[i].x, mapArr[i].y, waterTexture)
       }
     }
-    console.log(mapArr, "tiles");
+    console.log(mapArr.length, "tiles", mapArr);
 
-    // console.log(grassArr.length, "grass tiles", grassArr);
-    // console.log(mountainArr.length, "mountain tiles", mountainArr);
-    // console.log(waterArr.length, "water tiles", waterArr);
   }
 }

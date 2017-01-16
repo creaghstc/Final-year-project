@@ -3,8 +3,6 @@ function tile(x, y, type){
   this.y = y;
   this.type = type;
 
-
-
   this.setType = function(value){
     this.type = value;
   }
@@ -12,5 +10,7 @@ function tile(x, y, type){
   this.getType = function(){
     return this.type;
   }
+
+
 
 }
