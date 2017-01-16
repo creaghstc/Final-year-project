@@ -1,8 +1,9 @@
-function tile(x, y, type, noise){
+function tile(x, y, type){
   this.x = x;
   this.y = y;
   this.type = type;
-  this.noise = noise;
+
+
 
   this.setType = function(value){
     this.type = value;
@@ -11,7 +12,5 @@ function tile(x, y, type, noise){
   this.getType = function(){
     return this.type;
   }
-
-
 
 }
