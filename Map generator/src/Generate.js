@@ -1,3 +1,18 @@
+/**
+*   TODO
+*   select static points such depending on either hnoise value "height" or the terrain ie mountain for high. use this tile
+*   as an influence hub for the surrounding tiles weather/humidity. assign have a probability factor of certain weather depending on distance
+*   from the influence hub or north south position.
+*
+*   Change the type to a Texture object.
+*/
+
+
+
+
+
+
+
 function Generate(){
   var mapArr = [];
   var counter;
@@ -8,16 +23,14 @@ function Generate(){
         return null;
     var modeMap = {};
     var maxEl = array[0], maxCount = 1;
-    for(var i = 0; i < array.length; i++)
-    {
-        var el = array[i];
-        if(modeMap[el] == null)
-            modeMap[el] = 1;
+    for(var i = 0; i < array.length; i++){
+      var el = array[i];
+      if(modeMap[el] == null)
+          modeMap[el] = 1;
         else
-            modeMap[el]++;
-        if(modeMap[el] > maxCount)
-        {
-            maxEl = el;
+          modeMap[el]++;
+        if(modeMap[el] > maxCount){
+          maxEl = el;
             maxCount = modeMap[el];
         }
     }
@@ -47,8 +60,7 @@ function Generate(){
       }
     }
     ResultArray.push(counter);
-    ResultArray.push(mode(typeArr)); //get most common tile
-
+    ResultArray.push(typeArr); //get most common tile
     return ResultArray; //return most common tile and counter
   }
 
@@ -56,8 +68,9 @@ function Generate(){
   function smooth(){
     for(i = 0; i < mapArr.length; i++){
       var answer = surroundingTiles(mapArr[i]);
+      // console.log(answer);
       if(answer[0] > 6 ){
-        mapArr[i].type = answer[1];
+        mapArr[i].type = mode(answer[1]);
       }
     }
   }
@@ -108,27 +121,21 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .33 && map[i][j] <= .66){
-          var x = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "grass");
           mapArr.push(x);
         }
         //mountain placement
         else if(map[i][j] > .66 && map[i][j] <= 1){
-          var x = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "mountain");
           mapArr.push(x);
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var x = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "water");
           mapArr.push(x);
         }
       }
     }
-
-    // for(i = 0; i < mapArr.length; i++){
-    //   if(mapArr[i].type == "grass"){
-    //     mapArr[i].type = 'mountain';
-    //   }
-    // }
     smooth();
 
     //this way allows me to edit the tile type before placing

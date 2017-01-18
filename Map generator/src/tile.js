@@ -12,6 +12,4 @@ function tile(x, y, type, noise){
     return this.type;
   }
 
-
-
 }
