@@ -6,7 +6,6 @@
 *
 *   Change the type to a Texture object.
 *
-*   Make shortest distance function.
 *
 */
 
@@ -21,7 +20,7 @@ function Generate(){
   var counter;
 
   function mode(array)
-{
+	{
     if(array.length == 0)
         return null;
     var modeMap = {};
@@ -38,9 +37,24 @@ function Generate(){
         }
     }
     return maxEl;
-}
+	}
+	
+	function shortestDist(tileA, tileB){
+		var distance;
+		
+		distance = Math.abs((tileA.x- tileB.x) + (tileA.y - tileB.y)); //taxi cab distance, made positive
+		return distance;
+	}
 
-
+	function distToWater(tile){
+		var waterSupplyArr = [];
+		for(i = 0; i < mapArr.length; i++){
+			if(mapArr[i].type == "water"){
+				waterSupplyArr.push(shortestDist(tile, mapArr[i]));
+			}
+		}
+	return Math.min.apply(Math, waterSupplyArr); //return min in array, ie the closest water
+	}
 
   function surroundingTiles(tile){
     counter = 0;
@@ -140,6 +154,7 @@ function Generate(){
       }
     }
     smooth();
+    distToWater(mapArr[200]);
 
     //this way allows me to edit the tile type before placing
     for(i = 0; i < mapArr.length; i++){
