@@ -5,6 +5,9 @@
 *   from the influence hub or north south position.
 *
 *   Change the type to a Texture object.
+*
+*   Make shortest distance function.
+*
 */
 
 
