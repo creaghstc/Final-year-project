@@ -4,15 +4,10 @@
 *   as an influence hub for the surrounding tiles weather/humidity. assign have a probability factor of certain weather depending on distance
 *   from the influence hub or north south position.
 *
-*   Change the type to a Texture object.
+*   
 *
 *
 */
-
-
-
-
-
 
 
 function Generate(){
@@ -42,7 +37,7 @@ function Generate(){
 	function shortestDist(tileA, tileB){
 		var distance;
 		
-		distance = Math.abs((tileA.x- tileB.x) + (tileA.y - tileB.y)); //taxi cab distance, made positive
+		distance = (((tileA.x- tileB.x)^2 + (tileA.y - tileB.y)^2)^.5); //Euclidean dist
 		return distance;
 	}
 
@@ -82,12 +77,12 @@ function Generate(){
   }
 
 
-  function smooth(){
-    for(i = 0; i < mapArr.length; i++){
-      var answer = surroundingTiles(mapArr[i]);
+  function smooth(map){
+    for(i = 0; i < map.length; i++){
+      var answer = surroundingTiles(map[i]);
       // console.log(answer);
       if(answer[0] > 6 ){
-        mapArr[i].type = mode(answer[1]);
+        map[i].type = mode(answer[1]);
       }
     }
   }
@@ -153,7 +148,7 @@ function Generate(){
         }
       }
     }
-    smooth();
+    smooth(mapArr);
     distToWater(mapArr[200]);
 
     //this way allows me to edit the tile type before placing

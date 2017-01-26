@@ -8,17 +8,17 @@
   <script src="src/tile.js"></script>
 
   <script>
-  var test = new PIXI.Container();
+  var screen = new PIXI.Container();
 
   var map = []; //map array
   var inc = 0.01;
   //tile dimensions
-  var tile_width = 10
-  var tile_height = 10;
+  var tile_width = 5
+  var tile_height = 5;
   //var screen_width = window.prompt("Enter width");
   //var screen_height = window.prompt("Enter Height");
-  var screen_height = 2000;
-  var screen_width = 3000;
+  var screen_height = 1000;
+  var screen_width = 600;
 
   var h = (screen_height/tile_height); //relative height
   var w = (screen_width/tile_width); //relative width
@@ -34,7 +34,7 @@
   function animate() {
     requestAnimationFrame(animate);
     // renderer.render(stage);
-    renderer.render(test);
+    renderer.render(screen);
 
   }
 
@@ -47,17 +47,17 @@
     map.generateNoise(map);
     map.generateMap(map);
 
-    setTimeout(delay, 500);
+    setTimeout(renderToTexture, 500);
 
   }//end funciton setup
 
-  function delay(){
+  function renderToTexture(){
     var renderTexture = PIXI.RenderTexture.create(screen_width, screen_height);
     // renderTexture.render(stage);
     renderer.render(stage, renderTexture);
 
     var stageImage = new PIXI.Sprite(renderTexture);
-    test.addChild(stageImage);
+    screen.addChild(stageImage);
 
 
     animate(); //draw
