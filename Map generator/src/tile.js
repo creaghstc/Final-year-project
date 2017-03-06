@@ -1,15 +1,10 @@
 function tile(x, y, type, noise){
-  this.x = x;
-  this.y = y;
+  this.x = x/tile_width;
+  this.y = y/tile_width;
   this.type = type;
   this.noise = noise;
 
-  this.setType = function(value){
-    this.type = value;
-  }
+  var position = [x,y];
 
-  this.getType = function(){
-    return this.type;
-  }
 
 }
