@@ -19,6 +19,8 @@ function Generate(){
   var holdingArr = [];
   var mapArr = [];
   var counter;
+  var previousRiver = [];
+  var peaks = [];
 
   function mode(array)
 	{
@@ -68,25 +70,35 @@ function Generate(){
     counter = 0;
     var typeArr = [];
     var ResultArray = [];
+    var surrounding = [];
 
 
     typeArr.push(mapArr[tile.y][tile.x-1].type); //log base tile type
+    surrounding.push(mapArr[tile.y][tile.x-1]);
 
     typeArr.push(mapArr[tile.y][tile.x+1].type); //log base tile type
+    surrounding.push(mapArr[tile.y][tile.x+1]);
 
     typeArr.push(mapArr[tile.y+1][tile.x-1].type); //log base tile type
+    surrounding.push(mapArr[tile.y+1][tile.x-1]);
 
     typeArr.push(mapArr[tile.y+1][tile.x].type); //log base tile type
+    surrounding.push(mapArr[tile.y+1][tile.x]);
+
 
     typeArr.push(mapArr[tile.y+1][tile.x+1].type); //log base tile type
+    surrounding.push(mapArr[tile.y+1][tile.x+1]);
 
     typeArr.push(mapArr[tile.y-1][tile.x-1].type); //log base tile type
+    surrounding.push(mapArr[tile.y-1][tile.x-1]);
 
     typeArr.push(mapArr[tile.y-1][tile.x].type); //log base tile type
+    surrounding.push(mapArr[tile.y-1][tile.x]);
 
     typeArr.push(mapArr[tile.y-1][tile.x+1].type); //log base tile type
+    surrounding.push(mapArr[tile.y-1][tile.x+1]);
 
-    for(var x = 0; x < typeArr.length; x++){
+    for(x in typeArr){
       if(typeArr[x] != tile.type){
         counter ++;
       }
@@ -94,6 +106,7 @@ function Generate(){
 
     ResultArray.push(counter);
     ResultArray.push(typeArr); //get most common tile
+    ResultArray.push(surrounding); //all surrounding tiles
 
     return ResultArray; //return most common tile and counter
 
@@ -114,6 +127,38 @@ function Generate(){
       }
     }
     mapArr = holdingArr;
+  }
+
+  function river(tile){
+    previousRiver.push(tile); //add to previuos buffer
+    var heights = [];
+    var tiles = surroundingTiles(tile)[2]; //get array of surrounding tiles
+    // console.log(tiles);
+    for(t in tiles){ //check if tile was used before
+      for(x in previousRiver){
+        if(previousRiver[x] != tiles[t] && tiles[t].noise < tile.noise){ //if not used
+          heights.push(tiles[t].noise); //log its height
+
+        }
+      }
+    }
+    // console.log(heights);
+    minimum = Math.min.apply(Math, heights) //get minimum height
+    // console.log(minimum);
+
+    if(tile.type != "water"){ //if not already water
+      //if already water the river has reached destination
+      tile.type = "river"; //set to water
+      for(t in tiles){
+        // console.log(t);
+        if(tiles[t].noise == minimum){ //whichever tile matches minimum
+          river(tiles[t]); //recurr
+        }
+      }
+
+    }
+    // river(temp);
+
   }
 
   function placeTile(x,y,texture){
@@ -187,15 +232,26 @@ function Generate(){
         else if(map[i][j] >= .8 && map[i][j] < 1){ // >1 for when Noise detail above .5
             var x = new tile(j*tile_width, i*tile_height, "peak", map[i][j]);
             mapArr[i][j] = x;
+            peaks.push(x);
           }
       }
 
     }
-    smooth();
+    for(var int = 0; int < 3; int++){
+      smooth();
+    }
     console.log("smoothed");
     sand();
-    console.log("sand'");
-    // sand();
+    console.log("sand placed");
+    for(p in peaks){
+      if(p%10 == 0){ //cut down on number of rivers
+        river(peaks[p]);
+      }
+    }
+    console.log("rivers placed");
+
+
+
 
 
     //this way allows me to edit the tile type before placing
