@@ -43,34 +43,36 @@ function Generate(){
 	}
 
 
-  function sand(){ //using x as to not clash with loop in distanceTo()
+  function sand(){
     holdingArr = mapArr;
-
 
     for(i = 1; i < h-1; i++){
       for(j = 1; j < w-1; j++){
-        var count = 0;
-
+        var waterPresent = false;
         var answer = surroundingTiles(mapArr[i][j]);
+
         for(p in answer[1]){
           if(answer[1][p] == "water"){
-            count ++;
+            waterPresent = true;
           }
         }
-        if(mapArr[i][j].type != "water" && count != 0){
+
+        if(mapArr[i][j].type != "water" && waterPresent == true){
           holdingArr[i][j].type = "sand";
+          holdingArr[i][j].distanceTowater = 1;
         }
       }
     }
     mapArr = holdingArr;
-
   }
 
   function surroundingTiles(tile){
-    counter = 0;
+    var counter = 0;
+    var di = 0
     var typeArr = [];
     var ResultArray = [];
     var surrounding = [];
+    var waterdist = [];
 
 
     typeArr.push(mapArr[tile.y][tile.x-1].type); //log base tile type
@@ -104,9 +106,17 @@ function Generate(){
       }
     }
 
+    for(x in surrounding){
+      di += surrounding[x].distanceTowater;
+    }
+    waterdist.push(di/8);
+
     ResultArray.push(counter);
     ResultArray.push(typeArr); //get most common tile
     ResultArray.push(surrounding); //all surrounding tiles
+    ResultArray.push(waterdist);
+
+
 
     return ResultArray; //return most common tile and counter
 
@@ -116,11 +126,9 @@ function Generate(){
   function smooth(){
     holdingArr = mapArr;
 
-
     for(i = 1; i < h-1; i++){
       for(j = 1; j < w-1; j++){
         var answer = surroundingTiles(mapArr[i][j]);
-        // console.log(answer[0]);
         if(answer[0] >= 5){
           holdingArr[i][j].type = mode(answer[1]);
         }
@@ -158,6 +166,25 @@ function Generate(){
 
     }
     // river(temp);
+
+  }
+
+  function distanceTowater(){
+    for(var i = 1; i < h-1; i++){
+      for(var j = 1; j < w-1; j++){
+        if(mapArr[i][j].type == "water"){
+          mapArr[i][j].distanceTowater = 0;
+        }
+        else if(mapArr[i][j].distanceTowater == null){
+          // console.log()
+          mapArr[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3]+1;
+
+        }
+      }
+    }
+    // console.log(tile.distanceTowater);
+    tile.distanceTowater = Math.min(surroundingTiles(tile)[3])+1;
+    // console.log(tile.distanceTowater);
 
   }
 
@@ -212,43 +239,48 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .4 && map[i][j] <= .6){
-          var x = new tile(j*tile_width, i*tile_height, "grass", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "grass", map[i][j], null);
           mapArr[i][j] = x;
         }
         //mountain placement
         else if(map[i][j] > .6 && map[i][j] <= .8 || map[i][j] == 1){
-          var x = new tile(j*tile_width, i*tile_height, "mountain", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "mountain", map[i][j], null);
           mapArr[i][j] = x;
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var x = new tile(j*tile_width, i*tile_height, "water", map[i][j]);
+          var x = new tile(j*tile_width, i*tile_height, "water", map[i][j], 0);
           mapArr[i][j] = x;
         }
         else if(map[i][j] < .4 && map[i][j] >= .33 ){ // >1 for when Noise detail above .5
-            var x = new tile(j*tile_width, i*tile_height, "Fertilegrass", map[i][j]);
+            var x = new tile(j*tile_width, i*tile_height, "Fertilegrass", map[i][j], null);
             mapArr[i][j] = x;
           }
         else if(map[i][j] >= .8 && map[i][j] < 1){ // >1 for when Noise detail above .5
-            var x = new tile(j*tile_width, i*tile_height, "peak", map[i][j]);
+            var x = new tile(j*tile_width, i*tile_height, "peak", map[i][j], null);
             mapArr[i][j] = x;
             peaks.push(x);
           }
       }
 
     }
-    for(var int = 0; int < 3; int++){
+    for(var call = 0; call < 3; call++){
       smooth();
     }
     console.log("smoothed");
     sand();
     console.log("sand placed");
-    for(p in peaks){
-      if(p%10 == 0){ //cut down on number of rivers
-        river(peaks[p]);
-      }
-    }
-    console.log("rivers placed");
+    // for(p in peaks){
+    //   if(p%10 == 0){ //cut down on number of rivers
+    //     river(peaks[p]);
+    //   }
+    // }
+    // console.log("rivers placed");
+    // // for(var p = 0; p < 20; p++){
+    // //   distanceTowater();
+    // // }
+    //
+    // console.log("distance to watered");
 
 
 

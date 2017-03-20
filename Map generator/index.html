@@ -42,7 +42,7 @@
    //p5 requires setup (temporary)
   function setup(){
 
-    // noiseSeed(999);
+    noiseSeed(999);
     noiseDetail(8,0.5); // if falloff above .5, noise may return value > 1
     var map = new Generate(); //Generate object
     map.init2DMap(map,h,w);
@@ -60,8 +60,6 @@
 
     var stageImage = new PIXI.Sprite(renderTexture);
     test.addChild(stageImage);
-
-
     animate(); //draw
   }
   </script>
