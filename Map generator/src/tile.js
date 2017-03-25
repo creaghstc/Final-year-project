@@ -1,11 +1,8 @@
-function tile(x, y, type, noise, distanceTowater){
-  this.x = x/tile_width;
-  this.y = y/tile_width;
+function tile(x, y, type, noise){
+
+  this.x = x;
+  this.y = y;
   this.type = type;
   this.noise = noise;
-  this.distanceTowater = distanceTowater;
-
-  var position = [x,y];
-
-
+  var distanceTowater = 0;
 }

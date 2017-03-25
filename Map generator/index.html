@@ -10,7 +10,7 @@
 
 
   <script>
-  var test = new PIXI.Container();
+  var mapImage = new PIXI.Container();
 
   var map = []; //map array
   //tile dimensions
@@ -35,7 +35,7 @@
   function animate() {
     requestAnimationFrame(animate);
     // renderer.render(stage);
-    renderer.render(test);
+    renderer.render(mapImage);
 
   }
 
@@ -59,7 +59,7 @@
     renderer.render(stage, renderTexture);
 
     var stageImage = new PIXI.Sprite(renderTexture);
-    test.addChild(stageImage);
+    mapImage.addChild(stageImage);
     animate(); //draw
   }
   </script>
