@@ -66,13 +66,11 @@ function Generate(){
         }
       }
     }
-
     for(x in typeArr){
       if(typeArr[x] != tile.type){
         counter ++;
       }
     }
-
     for(x in surrounding){
       if(surrounding[x].distanceTowater == null){
       }
@@ -80,16 +78,11 @@ function Generate(){
         waterdist.push(surrounding[x].distanceTowater);
       }
     }
-
     ResultArray.push(counter);
     ResultArray.push(typeArr); //get most common tile
     ResultArray.push(surrounding); //all surrounding tiles
     ResultArray.push(Math.min.apply(Math,waterdist));
-
-
-
     return ResultArray; //return most common tile and counter
-
   }
 
 
@@ -132,38 +125,33 @@ function Generate(){
       }
     }
   }
-  function euclid(tileA, tileB){
-    xdif = Math.pow(tileA.x-tileB.x,2);
-    ydif = Math.pow(tileA.y-tileB.y,2);
-    euclideanDistance = Math.pow(xdif+ydif, 0.5);
-
-    return euclideanDistance;
-  }
 
   function DistanceTowater(initialSeed){
-    var hold = mapArr;
+    var holdingArr = mapArr; //assign a holding array
     for(var i = 1; i < h-1; i++){
       for(var j = 1; j < w-1; j++){
 
-        if (initialSeed == false) {
-          if(mapArr[i][j].type == "water"){
-            hold[i][j].distanceTowater = 0;
+        if (initialSeed == false) { //check if water is seeded or not
+          if(mapArr[i][j].type == "water"){ //keeps water tiles at 0
+            holdingArr[i][j].distanceTowater = 0;
           }
+          //if there is no distance information and the minimum distance of surroundingTiles is not infinity (minimum of empty array)
           else if(mapArr[i][j].distanceTowater == null && surroundingTiles(mapArr[i][j])[3] != Infinity){
-            hold[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1;
+            holdingArr[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1; //assin to min distance + 1
           }
         }
-        else{
-          if(mapArr[i][j].type == "water"){
-            hold[i][j].distanceTowater = 0;
+
+        else{ //if water is seeded
+          if(mapArr[i][j].type == "water"){ //keeps water tiles at 0
+            holdingArr[i][j].distanceTowater = 0;
           }
-          else if(surroundingTiles(mapArr[i][j])[3] != Infinity){
-            hold[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1;
+          else if(surroundingTiles(mapArr[i][j])[3] != Infinity){ //do every tile not just null tiles
+            holdingArr[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1;
           }
         }
       }
     }
-    mapArr = hold;
+    mapArr = holdingArr; //re assign mapArr
   }
 
 
@@ -174,6 +162,8 @@ function Generate(){
     tile.position.y = y;
     stage.addChild(tile);
   }
+
+
   this.generateNoise = function(map){
     var ycoord = 0;
     for(i = 0; i < h; i++){ //loop through rows
@@ -185,7 +175,6 @@ function Generate(){
         }
         else{
           map[i][j] = noise(xcoord,ycoord); //produce nouse for each element in map
-
         }
       }//end j loop
       ycoord += .08;
@@ -220,79 +209,67 @@ function Generate(){
 
         //Grass placement
         if(map[i][j] > .4 && map[i][j] <= .6){
-          var x = new tile(j, i, "grass", map[i][j], null);
+          var x = new tile(j, i, "grass", map[i][j]);
           mapArr[i][j] = x;
         }
         //mountain placement
         else if(map[i][j] > .6 && map[i][j] <= .8 || map[i][j] == 1){
-          var x = new tile(j, i, "mountain", map[i][j], null);
+          var x = new tile(j, i, "mountain", map[i][j]);
           mapArr[i][j] = x;
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var x = new tile(j, i, "water", map[i][j], null);
+          var x = new tile(j, i, "water", map[i][j]);
           mapArr[i][j] = x;
         }
         else if(map[i][j] < .4 && map[i][j] >= .33 ){ // >1 for when Noise detail above .5
-            var x = new tile(j, i, "Fertilegrass", map[i][j], null);
+            var x = new tile(j, i, "grass", map[i][j]);
             mapArr[i][j] = x;
           }
         else if(map[i][j] >= .8 && map[i][j] < 1){ // >1 for when Noise detail above .5
-            var x = new tile(j, i, "peak", map[i][j], null);
+            var x = new tile(j, i, "peak", map[i][j]);
             mapArr[i][j] = x;
             peaks.push(x);
           }
       }
     }
-
-    for(p = 0; p< 16; p++){
-      console.log(isWaterSeeded);
-      DistanceTowater(isWaterSeeded);
-      isWaterSeeded = true;
-
-    }
-
     for(var call = 0; call < 3; call++){
       smooth();
     }
 
-    
+    console.log("smoothed");
+
+    for(iteration = 0; iteration < 19; iteration++){
+      DistanceTowater(isWaterSeeded);
+      isWaterSeeded = true;
+    }
+
     for(var i = 1; i < h-1; i++){
       for(var j = 1; j < w-1; j++){
+        if(mapArr[i][j].distanceTowater < 10 && mapArr[i][j].noise > 0.33 && mapArr[i][j].noise < .4 && mapArr[i][j].type == "grass"){
+          mapArr[i][j].type = "Fertilegrass";
+        }
         if(mapArr[i][j].type == "river"){
           mapArr[i][j].type = "water";
         }
         else if(mapArr[i][j].type == "Fertilegrass" && mapArr[i][j].distanceTowater < 8 && mapArr[i][j].distanceTowater > 3){
           mapArr[i][j].type = "tree";
         }
-        else if(mapArr[i][j].type == "grass" && mapArr[i][j].distanceTowater > 30 && mapArr[i][j].noise >.4){
-          mapArr[i][j].type = "sand";
-        }
       }
     }
+    smooth();
+    DistanceTowater(true);
+    console.log("distance to water calculated");
 
-
-    console.log("smoothed");
     sand();
     console.log("sand placed");
+
     for(p in peaks){
       if(p%8 == 0){ //cut down on number of rivers
         river(peaks[p]);
       }
     }
     console.log("rivers placed");
-
-    console.log("distance to watered");
-
-
-
-
-
-
-
-
-
-
 
 
     //this way allows me to edit the tile type before placing
@@ -304,7 +281,7 @@ function Generate(){
         else if(mapArr[i][j].type == "mountain"){
           placeTile(mapArr[i][j].x*tile_width, mapArr[i][j].y*tile_width, mountainTexture);
         }
-        else if(mapArr[i][j].type == "water"){
+        else if(mapArr[i][j].type == "water" || mapArr[i][j].type == "river"){
           placeTile(mapArr[i][j].x*tile_width, mapArr[i][j].y*tile_width, waterTexture);
         }
         else if(mapArr[i][j].type == "sand"){
