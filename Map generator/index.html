@@ -16,10 +16,10 @@
   //tile dimensions
   var tile_width = 5;
   var tile_height = 5;
-  //var screen_width = window.prompt("Enter width");
-  //var screen_height = window.prompt("Enter Height");
-  var screen_height = 1000;
-  var screen_width = 1000;
+  var screen_width = window.prompt("Enter width");
+  var screen_height = window.prompt("Enter Height");
+  // var screen_height = 1000;
+  // var screen_width = 1000;
 
   var h = (screen_height/tile_height); //relative height
   var w = (screen_width/tile_width); //relative width
@@ -34,15 +34,12 @@
 
   function animate() {
     requestAnimationFrame(animate);
-    // renderer.render(stage);
     renderer.render(mapImage);
 
   }
 
-   //p5 requires setup (temporary)
   function setup(){
-
-    noiseSeed(9);
+    // noiseSeed(9);
     noiseDetail(8,0.5); // if falloff above .5, noise may return value > 1
     var map = new Generate(); //Generate object
     map.init2DMap(map,h,w);
