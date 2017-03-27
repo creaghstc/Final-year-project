@@ -1,19 +1,3 @@
-/**
-*   TODO
-*   select static points such depending on either hnoise value "height" or the terrain ie mountain for high. use this tile
-*   as an influence hub for the surrounding tiles weather/humidity. assign have a probability factor of certain weather depending on distance
-*   from the influence hub or north south position.
-*
-*   Change the type to a Texture object.
-*
-*
-*/
-
-
-
-
-
-
 
 function Generate(){
   var holdingArr = [];
@@ -22,25 +6,25 @@ function Generate(){
   var previousRiver = [];
   var peaks = [];
   var waterArr = [];
+  var isWaterSeeded = false;
 
-  function mode(array)
-	{
-    if(array.length == 0)
-        return null;
+  function mode(array){
     var modeMap = {};
-    var maxEl = array[0], maxCount = 1;
+    var maxElement = array[0];
+    var maxCount = 1;
+
     for(var i = 0; i < array.length; i++){
-      var el = array[i];
-      if(modeMap[el] == null)
-          modeMap[el] = 1;
+      var element = array[i];
+      if(modeMap[element] == null)
+          modeMap[element] = 1;
         else
-          modeMap[el]++;
-        if(modeMap[el] > maxCount){
-          maxEl = el;
-            maxCount = modeMap[el];
+          modeMap[element]++;
+        if(modeMap[element] > maxCount){
+          maxElement = element;
+            maxCount = modeMap[element];
         }
     }
-    return maxEl;
+    return maxElement;
 	}
 
 
@@ -60,7 +44,6 @@ function Generate(){
 
         if(mapArr[i][j].type != "water" && waterPresent == true){
           holdingArr[i][j].type = "sand";
-          holdingArr[i][j].distanceTowater = 1;
         }
       }
     }
@@ -69,37 +52,20 @@ function Generate(){
 
   function surroundingTiles(tile){
     var counter = 0;
-    var di = 0
     var typeArr = [];
     var ResultArray = [];
     var surrounding = [];
     var waterdist = [];
 
-
-    typeArr.push(mapArr[tile.y][tile.x-1].type); //log base tile type
-    surrounding.push(mapArr[tile.y][tile.x-1]);
-
-    typeArr.push(mapArr[tile.y][tile.x+1].type); //log base tile type
-    surrounding.push(mapArr[tile.y][tile.x+1]);
-
-    typeArr.push(mapArr[tile.y+1][tile.x-1].type); //log base tile type
-    surrounding.push(mapArr[tile.y+1][tile.x-1]);
-
-    typeArr.push(mapArr[tile.y+1][tile.x].type); //log base tile type
-    surrounding.push(mapArr[tile.y+1][tile.x]);
-
-
-    typeArr.push(mapArr[tile.y+1][tile.x+1].type); //log base tile type
-    surrounding.push(mapArr[tile.y+1][tile.x+1]);
-
-    typeArr.push(mapArr[tile.y-1][tile.x-1].type); //log base tile type
-    surrounding.push(mapArr[tile.y-1][tile.x-1]);
-
-    typeArr.push(mapArr[tile.y-1][tile.x].type); //log base tile type
-    surrounding.push(mapArr[tile.y-1][tile.x]);
-
-    typeArr.push(mapArr[tile.y-1][tile.x+1].type); //log base tile type
-    surrounding.push(mapArr[tile.y-1][tile.x+1]);
+    for(x = -1; x < 2; x++){
+      for(y = -1; y < 2; y++){
+        if(x == 0 && y == 0){}
+        else{
+          typeArr.push(mapArr[tile.y+y][tile.x+x].type); //log base tile type
+          surrounding.push(mapArr[tile.y+y][tile.x+x]);
+        }
+      }
+    }
 
     for(x in typeArr){
       if(typeArr[x] != tile.type){
@@ -108,14 +74,17 @@ function Generate(){
     }
 
     for(x in surrounding){
-      di += surrounding[x].distanceTowater;
+      if(surrounding[x].distanceTowater == null){
+      }
+      else{
+        waterdist.push(surrounding[x].distanceTowater);
+      }
     }
-    waterdist.push(di/8);
 
     ResultArray.push(counter);
     ResultArray.push(typeArr); //get most common tile
     ResultArray.push(surrounding); //all surrounding tiles
-    ResultArray.push(waterdist);
+    ResultArray.push(Math.min.apply(Math,waterdist));
 
 
 
@@ -133,6 +102,7 @@ function Generate(){
         if(answer[0] >= 5){
           holdingArr[i][j].type = mode(answer[1]);
         }
+
       }
     }
     mapArr = holdingArr;
@@ -170,18 +140,33 @@ function Generate(){
     return euclideanDistance;
   }
 
-  function distanceTowater(){
+  function DistanceTowater(initialSeed){
+    var hold = mapArr;
     for(var i = 1; i < h-1; i++){
       for(var j = 1; j < w-1; j++){
-        var distances = [];
-        for(water in waterArr){
-          distances.push(euclid(mapArr[i][j],water));
 
+        if (initialSeed == false) {
+          if(mapArr[i][j].type == "water"){
+            hold[i][j].distanceTowater = 0;
+          }
+          else if(mapArr[i][j].distanceTowater == null && surroundingTiles(mapArr[i][j])[3] != Infinity){
+            hold[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1;
+          }
         }
-        mapArr[i][j].distanceTowater = Math.min(distances);
+        else{
+          if(mapArr[i][j].type == "water"){
+            hold[i][j].distanceTowater = 0;
+          }
+          else if(surroundingTiles(mapArr[i][j])[3] != Infinity){
+            hold[i][j].distanceTowater = surroundingTiles(mapArr[i][j])[3] + 1;
+          }
+        }
       }
     }
+    mapArr = hold;
   }
+
+
 
   function placeTile(x,y,texture){
     var tile = new PIXI.extras.TilingSprite(texture, tile_height, tile_width);
@@ -228,47 +213,65 @@ function Generate(){
     var sandTexture = PIXI.Texture.fromImage("img/yellow.jpg");
     var FertilegrassTexture = PIXI.Texture.fromImage("img/fertilegrass1.png");
     var peakTexture = PIXI.Texture.fromImage("img/peak.png");
+    var treeTexture = PIXI.Texture.fromImage("img/tree.png");
 
     for(i = 0; i < h; i++){
       for(j = 0; j < w; j++){
 
         //Grass placement
         if(map[i][j] > .4 && map[i][j] <= .6){
-          var x = new tile(j, i, "grass", map[i][j]);
+          var x = new tile(j, i, "grass", map[i][j], null);
           mapArr[i][j] = x;
         }
         //mountain placement
         else if(map[i][j] > .6 && map[i][j] <= .8 || map[i][j] == 1){
-          var x = new tile(j, i, "mountain", map[i][j]);
+          var x = new tile(j, i, "mountain", map[i][j], null);
           mapArr[i][j] = x;
         }
         //water placement
         else if(map[i][j] >= 0 && map[i][j] <= .33 || map[i][j] > 1){ // >1 for when Noise detail above .5
-          var x = new tile(j, i, "water", map[i][j]);
+          var x = new tile(j, i, "water", map[i][j], null);
           mapArr[i][j] = x;
         }
         else if(map[i][j] < .4 && map[i][j] >= .33 ){ // >1 for when Noise detail above .5
-            var x = new tile(j, i, "Fertilegrass", map[i][j]);
+            var x = new tile(j, i, "Fertilegrass", map[i][j], null);
             mapArr[i][j] = x;
           }
         else if(map[i][j] >= .8 && map[i][j] < 1){ // >1 for when Noise detail above .5
-            var x = new tile(j, i, "peak", map[i][j]);
+            var x = new tile(j, i, "peak", map[i][j], null);
             mapArr[i][j] = x;
             peaks.push(x);
           }
       }
+    }
+
+    for(p = 0; p< 16; p++){
+      console.log(isWaterSeeded);
+      DistanceTowater(isWaterSeeded);
+      isWaterSeeded = true;
 
     }
+
     for(var call = 0; call < 3; call++){
       smooth();
     }
+
+    
     for(var i = 1; i < h-1; i++){
       for(var j = 1; j < w-1; j++){
-        if(mapArr[i][j].type == "water"){
-          waterArr.push(mapArr[i][j]);
+        if(mapArr[i][j].type == "river"){
+          mapArr[i][j].type = "water";
+        }
+        else if(mapArr[i][j].type == "Fertilegrass" && mapArr[i][j].distanceTowater < 8 && mapArr[i][j].distanceTowater > 3){
+          mapArr[i][j].type = "tree";
+        }
+        else if(mapArr[i][j].type == "grass" && mapArr[i][j].distanceTowater > 30 && mapArr[i][j].noise >.4){
+          mapArr[i][j].type = "sand";
         }
       }
     }
+
+
     console.log("smoothed");
     sand();
     console.log("sand placed");
@@ -278,9 +281,15 @@ function Generate(){
       }
     }
     console.log("rivers placed");
-    // distanceTowater();
 
     console.log("distance to watered");
+
+
+
+
+
+
+
 
 
 
@@ -307,9 +316,14 @@ function Generate(){
         else if(mapArr[i][j].type == "peak"){
           placeTile(mapArr[i][j].x*tile_width, mapArr[i][j].y*tile_width, peakTexture);
         }
+        else if(mapArr[i][j].type == "tree"){
+          placeTile(mapArr[i][j].x*tile_width, mapArr[i][j].y*tile_width, treeTexture);
+
+        }
       }
     }
     console.log(w*h, "tiles", mapArr);
+    console.log("Map generated");
 
   }
 }
