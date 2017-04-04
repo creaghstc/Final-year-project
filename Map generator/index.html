@@ -23,7 +23,8 @@
   var screen_height = window.prompt("Enter Height");
   var waterLevel = window.prompt("Enter water level (0-1)");
   var grassLevel = window.prompt("Enter grass level ("+waterLevel+"-1)");
-  var mountainLevel = window.prompt("Enter mountainLevel ("+grassLevel+"-1)");
+  // var mountainLevel = window.prompt("Enter mountainLevel ("+grassLevel+"-1)");
+  var mountainLevel = 0.8;
 
   var h = (screen_height/tile_height); //relative height
   var w = (screen_width/tile_width); //relative width
