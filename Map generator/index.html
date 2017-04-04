@@ -10,7 +10,10 @@
 
 
   <script>
+  //Pixi containers
   var mapImage = new PIXI.Container();
+  var stage = new PIXI.Container();
+
 
   var map = []; //map array
   //tile dimensions
@@ -18,8 +21,9 @@
   var tile_height = 5;
   var screen_width = window.prompt("Enter width");
   var screen_height = window.prompt("Enter Height");
-  // var screen_height = 1000;
-  // var screen_width = 1000;
+  var waterLevel = window.prompt("Enter water level (0-1)");
+  var grassLevel = window.prompt("Enter grass level ("+waterLevel+"-1)");
+  var mountainLevel = window.prompt("Enter mountainLevel ("+grassLevel+"-1)");
 
   var h = (screen_height/tile_height); //relative height
   var w = (screen_width/tile_width); //relative width
@@ -27,33 +31,29 @@
   //Pixi stuff
   var renderer = PIXI.autoDetectRenderer(screen_width, screen_height ,{backgroundColor : 0x000000255});
   document.body.appendChild(renderer.view);
-  var stage = new PIXI.Container();
-
-
-
 
   function animate() {
     requestAnimationFrame(animate);
-    renderer.render(mapImage);
+    renderer.render(mapImage); //draw map to screen
 
   }
 
   function setup(){
-    // noiseSeed(9);
+    noiseSeed(9); //noise seef
     noiseDetail(8,0.5); // if falloff above .5, noise may return value > 1
     var map = new Generate(); //Generate object
-    map.init2DMap(map,h,w);
-    map.generateNoise(map);
-    map.generateMap(map);
+    map.init2DMap(map,h,w); //initialise map
+    map.generateNoise(map); //apply noise
+    map.generateMap(map); //apply generation algorithms
 
-    setTimeout(delay, 1000);
+    setTimeout(delay, 1000); //delay for render texture
 
   }//end funciton setup
 
   function delay(){
-    var renderTexture = PIXI.RenderTexture.create(screen_width, screen_height);
-    renderer.render(stage, renderTexture);
-    var stageImage = new PIXI.Sprite(renderTexture);
+    var renderTexture = PIXI.RenderTexture.create(screen_width, screen_height); //create render texture
+    renderer.render(stage, renderTexture); //render stage container to texture
+    var stageImage = new PIXI.Sprite(renderTexture); //make new sprite using texture
     mapImage.addChild(stageImage);
     animate(); //draw
   }
