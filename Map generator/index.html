@@ -34,13 +34,13 @@
   document.body.appendChild(renderer.view);
 
   function animate() {
-    requestAnimationFrame(animate);
+    // requestAnimationFrame(animate);
     renderer.render(mapImage); //draw map to screen
 
   }
 
   function setup(){
-    noiseSeed(9); //noise seef
+    // noiseSeed(9); //noise seed
     noiseDetail(8,0.5); // if falloff above .5, noise may return value > 1
     var map = new Generate(); //Generate object
     map.init2DMap(map,h,w); //initialise map
